@@ -76,6 +76,19 @@ test('le bandit vole toute la cagnotte, le détective l\'arrête une fois', () =
   assert.equal(h.shield[0], 0);
 });
 
+test('un détective en deuxième porte referme la première mais laisse la main ; un bandit la referme et la fait passer', () => {
+  const g = mk(ITEMS);
+  g.open(0);
+  assert.equal(g.open(5)[1].e, 'detective');
+  assert.deepEqual(g.pending, [0]);
+  assert.equal(g.open(2), null);
+  assert.deepEqual(g.settle(), [{ e: 'close', cells: [0] }]);
+  assert.equal(g.turn, 0);
+  g.open(1);
+  g.open(4);
+  assert.deepEqual(g.settle(), [{ e: 'close', cells: [1] }, { e: 'turn', p: 1 }]);
+});
+
 test('le détective ne protège que celui qui l\'a trouvé', () => {
   const g = mk([RULES.DETECTIVE, 0, 0, 1, 1, RULES.BANDIT]);
   g.open(0); g.open(1); g.open(3); g.settle();

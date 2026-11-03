@@ -127,6 +127,24 @@ final class EngineTest extends TestCase
         $this->assertSame(0, $g->shield[0], 'le détective est consommé');
     }
 
+    public function testADetectiveAsSecondPickClosesTheFirstDoorButKeepsTheTurn(): void
+    {
+        $g = $this->game(2);
+        $g->open(0);
+        $events = $g->open(5);
+        $this->assertSame('detective', $events[1]['e']);
+        $this->assertSame([0], $g->pending);
+        $this->assertNull($g->open(2), 'on attend que la porte se referme');
+        $this->assertSame([['e' => 'close', 'cells' => [0]]], $g->settle(), 'pas de changement de joueur');
+        $this->assertSame(0, $g->turn);
+        $this->assertSame(Game::CLOSED, $g->state[0]);
+        $this->assertSame(1, $g->shield[0]);
+        $g->open(1);
+        $events = $g->open(4);                           // le bandit : arrêté par le détective, mais la première porte se referme et la main passe
+        $this->assertSame('blocked', $events[1]['e']);
+        $this->assertSame([['e' => 'close', 'cells' => [1]], ['e' => 'turn', 'p' => 1]], $g->settle());
+    }
+
     public function testTheDetectiveOnlyProtectsItsFinder(): void
     {
         $g = $this->game(2, [Rules::DETECTIVE, 0, 0, 1, 1, Rules::BANDIT]);

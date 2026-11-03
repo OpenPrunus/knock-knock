@@ -31,6 +31,8 @@ final class Game
     public int $first = -1;
     /** @var list<int> portes à refermer par `settle()` */
     public array $pending = [];
+    /** La main passe-t-elle à l'autre joueur quand `settle()` referme les portes ? (non après un détective) */
+    public bool $passOnSettle = true;
     public int $pairsLeft;
     public bool $over = false;
 
@@ -58,6 +60,12 @@ final class Game
             $this->state[$cell] = self::SPECIAL;
             $this->shield[$p]++;
             $events[] = ['e' => 'detective', 'c' => $cell, 'p' => $p];
+            if ($this->first !== -1) {
+                // le détective n'est pas le bon motif : la première porte se referme, mais on garde la main
+                $this->pending = [$this->first];
+                $this->passOnSettle = false;
+                $this->first = -1;
+            }
 
             return $events;
         }
@@ -72,6 +80,7 @@ final class Game
             }
             if ($this->first !== -1) {
                 $this->pending = [$this->first];
+                $this->passOnSettle = true;
                 $this->first = -1;
             } else {
                 $this->passTurn($events);
@@ -101,6 +110,7 @@ final class Game
         $this->state[$cell] = self::PENDING;
         $this->cash[$p] = max(0, $this->cash[$p] - Rules::MISS_PENALTY);
         $this->pending = [$first, $cell];
+        $this->passOnSettle = true;
         $events[] = ['e' => 'miss', 'a' => $first, 'b' => $cell, 'p' => $p, 'cash' => $this->cash[$p]];
 
         return $events;
@@ -122,7 +132,10 @@ final class Game
         }
         $this->pending = [];
         $events = [['e' => 'close', 'cells' => $cells]];
-        $this->passTurn($events);
+        if ($this->passOnSettle) {
+            $this->passTurn($events);
+        }
+        $this->passOnSettle = true;
 
         return $events;
     }

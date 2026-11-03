@@ -194,6 +194,7 @@ function applyEvent(ev) {
       cellEl(ev.c).disabled = true;
       banner(t(isMe(ev.p) && app.mode !== 'local' ? 'detectiveFoundYou' : 'detectiveFound', { name: nameOf(ev.p) }), 'good');
       audio.play('detective');
+      if (app.mode === 'online' && $('#board .cell.open:not(.special)')) app.locked = true;      // la première porte va se refermer
       break;
     case 'blocked':
       app.shield[ev.p]--;

@@ -118,6 +118,7 @@ export class Game {
     this.turn = 0;
     this.first = -1;
     this.pending = [];
+    this.passOnSettle = true;           // la main passe-t-elle quand les portes se referment ? (non après un détective)
     this.pairsLeft = layout.pairs;
     this.over = false;
   }
@@ -133,6 +134,12 @@ export class Game {
       this.state[cell] = SPECIAL;
       this.shield[p]++;
       events.push({ e: 'detective', c: cell, p });
+      if (this.first !== -1) {
+        // le détective n'est pas le bon motif : la première porte se referme, mais on garde la main
+        this.pending = [this.first];
+        this.passOnSettle = false;
+        this.first = -1;
+      }
       return events;
     }
     if (value === RULES.BANDIT) {
@@ -146,6 +153,7 @@ export class Game {
       }
       if (this.first !== -1) {
         this.pending = [this.first];
+        this.passOnSettle = true;
         this.first = -1;
       } else {
         this.#passTurn(events);
@@ -172,6 +180,7 @@ export class Game {
     this.state[cell] = PENDING;
     this.cash[p] = Math.max(0, this.cash[p] - RULES.MISS_PENALTY);
     this.pending = [first, cell];
+    this.passOnSettle = true;
     events.push({ e: 'miss', a: first, b: cell, p, cash: this.cash[p] });
     return events;
   }
@@ -183,7 +192,8 @@ export class Game {
     for (const c of cells) this.state[c] = CLOSED;
     this.pending = [];
     const events = [{ e: 'close', cells }];
-    this.#passTurn(events);
+    if (this.passOnSettle) this.#passTurn(events);
+    this.passOnSettle = true;
     return events;
   }
 

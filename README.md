@@ -39,6 +39,7 @@ the configuration variables and an HTTPS reverse proxy.
 - Open a first door, then a second one. Same picture: the pair is validated for good (+$100). Different pictures: −$10 (never below
   zero) and both doors close after 1.5 s.
 - With two players, finding a pair lets you play again; a mistake passes the turn. A Bandit also ends your turn.
+- Opening a Detective or a Bandit as the *second* door is not a pair: the first door closes again (a Detective lets you keep the turn, a Bandit ends it). Once revealed, their door stays open, dimmed.
 - The Detective stays active in the background for the player who found him. If that player later opens a Bandit, the Detective
   intercepts the attack (nothing is stolen) and is consumed.
 - A grid ends when all pairs are found. Bandits and Detectives do not have to be found.
