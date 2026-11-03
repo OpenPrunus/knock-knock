@@ -164,6 +164,21 @@ describe('page et modes hors ligne', () => {
     assert.deepEqual(errors, []);
   });
 
+  test('campagne solo : la difficulté change les grilles (12 / 12 / 16 cases au départ, puis 16 / 16 / 20) et s\'affiche', async () => {
+    for (const [level, first, second] of [['easy', 12, 16], ['normal', 12, 16], ['hard', 16, 20]]) {
+      await open(DESKTOP);
+      await ev(`(() => { const s = document.querySelector('#sel-level'); s.value = '${level}'; s.dispatchEvent(new Event('change')); })()`);
+      await click('#menu [data-action=solo]');
+      await waitFor(() => ev(`document.querySelectorAll("#board .cell").length === ${first}`), 3000, `manche 1 ${level}`);
+      assert.match(await text('#info'), level === 'easy' ? /Facile/ : level === 'hard' ? /Difficile/ : /Normal/);
+      const list = await items();
+      await findAll(list);
+      await waitFor(() => visible('#over'), 6000, 'fin de manche');
+      await click('#over-again');
+      await waitFor(() => ev(`document.querySelectorAll("#board .cell").length === ${second}`), 3000, `manche 2 ${level}`);
+    }
+  });
+
   test('contre-la-montre : le temps s\'affiche et sa fin termine la campagne en gardant la banque', async () => {
     await open(DESKTOP);
     await click('#opt-time');

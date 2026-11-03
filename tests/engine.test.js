@@ -15,7 +15,7 @@ test('xorshift32 : suite connue, 0 remplacé par 1', () => {
 });
 
 test('chaque niveau est jouable : motifs en double, bandits et détectives comptés', () => {
-  for (const l of [...RULES.LEVELS, RULES.ONLINE, ...Object.values(RULES.SIZES)]) {
+  for (const l of [...Object.values(RULES.CAMPAIGNS).flat(), RULES.ONLINE, ...Object.values(RULES.SIZES)]) {
     const g = generate(l.cols, l.rows, l.bandits, l.detectives, 5);
     assert.equal(g.items.length, l.cols * l.rows);
     assert.equal(g.items.filter((v) => v === RULES.BANDIT).length, l.bandits);
@@ -129,4 +129,16 @@ test('les tailles de grille suivent le niveau : 4×4, 5×5, 6×6 ; six styles de
   const seen = new Set();
   for (let seed = 1; seed <= 30; seed++) generate(6, 6, 4, 2, seed).skins.forEach((k) => seen.add(k));
   assert.deepEqual([...seen].sort(), [0, 1, 2, 3, 4, 5]);
+});
+
+test('la campagne dépend du niveau : facile plus petite, difficile plus grande et plus de bandits', () => {
+  const { easy, normal, hard } = RULES.CAMPAIGNS;
+  for (const c of [easy, normal, hard]) assert.equal(c.length, 8);
+  const cells = (c) => c.map((l) => l.cols * l.rows);
+  const sum = (a) => a.reduce((x, y) => x + y, 0);
+  assert.ok(sum(cells(easy)) < sum(cells(normal)) && sum(cells(normal)) < sum(cells(hard)));
+  const bandits = (c) => sum(c.map((l) => l.bandits));
+  assert.ok(bandits(easy) < bandits(normal) && bandits(normal) < bandits(hard));
+  for (const c of [easy, normal, hard]) for (let i = 1; i < c.length; i++) assert.ok(cells(c)[i] >= cells(c)[i - 1], 'les grilles ne rapetissent jamais');
+  assert.equal(normal, RULES.LEVELS);
 });

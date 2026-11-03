@@ -13,7 +13,7 @@ about what hides behind it**: two identical pictures can sit behind two complete
 - **Cash**: a pair is worth **+$100** (and the doors stay open), a mismatch costs **$10** (the doors close again after 1.5 s).
 - **The Bandit**: when a door reveals him, he steals all the cash you made in the current grid.
 - **The Detective**: found first, he stays with you as a one-shot shield — he stops the next Bandit, then he is gone.
-- **Solo campaign**: eight grids of growing size (3×4 up to 6×7) with more and more Bandits, plus an optional **time attack**. Your best total is kept.
+- **Solo campaign**: eight grids of growing size with more and more Bandits, plus an optional **time attack**. The level changes the campaign: easy stays small (3×4 up to 5×6), normal goes from 3×4 to 6×7, hard starts at 4×4 and ends on 6×7 with up to 8 Bandits. One best total is kept per level.
 - **Grid size follows the level**: easy 4×4, normal 5×5, hard 6×6 (more doors, more Bandits) against the computer and on the same screen. Online, quick match is 5×5 and whoever sends a challenge picks 4×4, 5×5 or 6×6.
 - **Against the computer** (easy / normal / hard): it takes turns on the same grid, plays again after a pair, and never cheats: it only
   knows the doors it has seen, and remembers each one with a probability of 30 % / 60 % / 95 %.

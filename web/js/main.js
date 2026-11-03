@@ -15,8 +15,9 @@ const DETECTIVE_ICON = '🕵️';
 const iconOf = (v) => (v === RULES.BANDIT ? BANDIT_ICON : v === RULES.DETECTIVE ? DETECTIVE_ICON : MOTIFS[v]);
 
 // ---------------------------------------------------------------- options (gardées dans le navigateur)
-const opts = { level: 'normal', time: false, names: ['', ''], nick: '', best: 0 };
+const opts = { level: 'normal', time: false, names: ['', ''], nick: '', best: { easy: 0, normal: 0, hard: 0 } };
 try { Object.assign(opts, JSON.parse(localStorage.getItem('knock.opts') ?? '{}')); } catch { /* stockage indisponible */ }
+if (typeof opts.best !== 'object' || opts.best === null) opts.best = { easy: 0, normal: Number(opts.best) || 0, hard: 0 };       // ancien format : un seul record
 const saveOpts = () => { try { localStorage.setItem('knock.opts', JSON.stringify(opts)); } catch { /* ignoré */ } };
 
 // ---------------------------------------------------------------- état
@@ -32,6 +33,7 @@ const app = {
   locked: false,       // pas de clic : erreur affichée, tour de l'ordinateur, partie finie…
   over: null,
   level: 0,
+  campaign: 'normal',
   bank: 0,
   timeLeft: null,
   ai: null,
@@ -137,7 +139,7 @@ function renderHud() {
     el.querySelector('.shield').textContent = app.shield[p] > 1 ? `${DETECTIVE_ICON}×${app.shield[p]}` : DETECTIVE_ICON;
   });
   if (solo) {
-    $('#info').textContent = t('level_n', { n: app.level + 1, total: RULES.LEVELS.length });
+    $('#info').textContent = `${t('level_n', { n: app.level + 1, total: campaign().length })} · ${t(app.campaign)}`;
     $('#sub').textContent = [t('bank', { amount: app.bank }), app.timeLeft !== null ? t('timeLeft', { s: app.timeLeft }) : ''].filter(Boolean).join(' · ');
   } else {
     const mine = isMe(app.turn);
@@ -255,14 +257,18 @@ function startSolo() {
   app.mode = 'solo';
   app.level = 0;
   app.bank = 0;
+  app.campaign = opts.level;
   hidePanels();
   audio.unlock();
   startLevel();
 }
 
+/** Les manches de la campagne, selon le niveau choisi au menu. */
+const campaign = () => RULES.CAMPAIGNS[app.campaign] ?? RULES.LEVELS;
+
 function startLevel() {
   clearTimers();
-  const config = RULES.LEVELS[app.level];
+  const config = campaign()[app.level];
   newGame(config, 1);
   app.timeLeft = null;
   if (opts.time) {
@@ -377,7 +383,7 @@ function endSolo(cleared, timeUp) {
   app.over = true;
   app.locked = true;
   if (cleared) app.bank += app.cash[0];
-  const lastLevel = app.level === RULES.LEVELS.length - 1;
+  const lastLevel = app.level === campaign().length - 1;
   let title;
   let detail;
   if (cleared && !lastLevel) {
@@ -388,9 +394,9 @@ function endSolo(cleared, timeUp) {
   } else {
     title = t(timeUp ? 'timeUp' : 'campaignDone');
     detail = t(timeUp ? 'timeUpDetail' : 'campaignDetail', { total: app.bank });
-    const record = app.bank > (opts.best ?? 0);
-    if (record) { opts.best = app.bank; saveOpts(); }
-    detail += ` ${record && app.bank > 0 ? t('newBest') : t('bestScore', { best: opts.best })}`;
+    const record = app.bank > (opts.best[app.campaign] ?? 0);
+    if (record) { opts.best[app.campaign] = app.bank; saveOpts(); }
+    detail += ` ${record && app.bank > 0 ? t('newBest') : t('bestScore', { best: opts.best[app.campaign] })}`;
     $('#over-again').textContent = t('again');
     $('#over-again').dataset.action = 'solo';
   }

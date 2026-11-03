@@ -15,6 +15,30 @@ export const RULES = {
     m: { cols: 5, rows: 5, bandits: 2, detectives: 1 },
     l: { cols: 6, rows: 6, bandits: 4, detectives: 2 },
   },
+  /** Campagne solo selon le niveau : facile reste petite, difficile commence plus grand et garde plus de bandits. */
+  CAMPAIGNS: {
+    easy: [
+      { cols: 3, rows: 4, bandits: 1, detectives: 1 },
+      { cols: 4, rows: 4, bandits: 1, detectives: 1 },
+      { cols: 4, rows: 4, bandits: 1, detectives: 1 },
+      { cols: 4, rows: 5, bandits: 2, detectives: 2 },
+      { cols: 4, rows: 5, bandits: 2, detectives: 2 },
+      { cols: 5, rows: 5, bandits: 2, detectives: 1 },
+      { cols: 5, rows: 5, bandits: 2, detectives: 1 },
+      { cols: 5, rows: 6, bandits: 3, detectives: 1 },
+    ],
+    normal: null,          // = LEVELS (renseigné juste après)
+    hard: [
+      { cols: 4, rows: 4, bandits: 2, detectives: 0 },
+      { cols: 4, rows: 5, bandits: 3, detectives: 1 },
+      { cols: 5, rows: 5, bandits: 3, detectives: 2 },
+      { cols: 5, rows: 6, bandits: 4, detectives: 2 },
+      { cols: 6, rows: 6, bandits: 5, detectives: 3 },
+      { cols: 6, rows: 6, bandits: 6, detectives: 2 },
+      { cols: 6, rows: 7, bandits: 6, detectives: 2 },
+      { cols: 6, rows: 7, bandits: 8, detectives: 2 },
+    ],
+  },
   /** Taille de grille selon le niveau (ordinateur et 2 joueurs). */
   SIZE_OF_LEVEL: { easy: 's', normal: 'm', hard: 'l' },
   LEVELS: [
@@ -28,6 +52,8 @@ export const RULES = {
     { cols: 6, rows: 7, bandits: 4, detectives: 2 },
   ],
 };
+
+RULES.CAMPAIGNS.normal = RULES.LEVELS;
 
 export const CLOSED = 0;
 export const PENDING = 1;
