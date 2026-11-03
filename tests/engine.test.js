@@ -15,7 +15,7 @@ test('xorshift32 : suite connue, 0 remplacé par 1', () => {
 });
 
 test('chaque niveau est jouable : motifs en double, bandits et détectives comptés', () => {
-  for (const l of [...RULES.LEVELS, RULES.ONLINE]) {
+  for (const l of [...RULES.LEVELS, RULES.ONLINE, ...Object.values(RULES.SIZES)]) {
     const g = generate(l.cols, l.rows, l.bandits, l.detectives, 5);
     assert.equal(g.items.length, l.cols * l.rows);
     assert.equal(g.items.filter((v) => v === RULES.BANDIT).length, l.bandits);
@@ -35,7 +35,7 @@ test('l\'aspect d\'une porte est indépendant de ce qu\'elle cache', () => {
     g.items.forEach((m, c) => { if (m >= 0) by.set(m, [...(by.get(m) ?? []), g.skins[c]]); });
     for (const [a, b] of by.values()) { total++; if (a === b) same++; }
   }
-  assert.ok(same / total > 0.1 && same / total < 0.4, `${same / total}`);
+  assert.ok(same / total > 0.08 && same / total < 0.3, `${same / total}`);
 });
 
 test('une paire trouvée reste ouverte, rapporte 100 $ et fait rejouer', () => {
@@ -121,4 +121,12 @@ test('les vecteurs enregistrés se rejouent à l\'identique', () => {
     });
     assert.deepEqual(g.state, v.final.state);
   }
+});
+
+test('les tailles de grille suivent le niveau : 4×4, 5×5, 6×6 ; six styles de portes en tout', () => {
+  assert.deepEqual(Object.entries(RULES.SIZE_OF_LEVEL).map(([lvl, k]) => [lvl, RULES.SIZES[k].cols * RULES.SIZES[k].rows]), [['easy', 16], ['normal', 25], ['hard', 36]]);
+  assert.equal(RULES.SKINS, 6);
+  const seen = new Set();
+  for (let seed = 1; seed <= 30; seed++) generate(6, 6, 4, 2, seed).skins.forEach((k) => seen.add(k));
+  assert.deepEqual([...seen].sort(), [0, 1, 2, 3, 4, 5]);
 });

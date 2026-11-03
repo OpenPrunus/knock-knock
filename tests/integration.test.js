@@ -56,7 +56,7 @@ describe('serveur de jeu', () => {
     assert.deepEqual(ma.grid, mb.grid);
     assert.equal(ma.grid.skins.length, 25);
     assert.equal(ma.grid.pairs, 11);
-    assert.ok(ma.grid.skins.every((s) => s >= 0 && s <= 3));
+    assert.ok(ma.grid.skins.every((s) => s >= 0 && s <= 5));
     assert.doesNotMatch(JSON.stringify(ma), /items/);
   });
 
@@ -144,6 +144,23 @@ describe('serveur de jeu', () => {
     const inv2 = await b.next('invite');
     b.send({ t: 'accept', id: inv2.id });
     await waitFor(() => a.last('match') && b.last('match'), 3000, 'match du défi');
+  });
+
+  test('défi avec une taille de grille : petite, grande, ou valeur inconnue (retombe sur la moyenne) ; la revanche garde la taille', async () => {
+    const sizes = [['s', 16], ['l', 36], ['grosse', 25], [undefined, 25]];
+    for (const [i, [size, cells]] of sizes.entries()) {
+      const a = await bot(`Taille${i}a`, token(`taille${i}a`));
+      const b = await bot(`Taille${i}b`, token(`taille${i}b`));
+      const idB = (await waitFor(() => a.last('lobby')?.players.find((p) => p.name === `Taille${i}b`), 4000, 'adversaire dans le salon')).id;
+      a.send({ t: 'challenge', id: idB, ...(size ? { size } : {}) });
+      const inv = await b.next('invite');
+      assert.equal(inv.size, size === 's' || size === 'l' ? size : 'm');
+      b.send({ t: 'accept', id: inv.id });
+      const m = await waitFor(() => a.last('match'), 3000, 'match');
+      assert.equal(m.grid.skins.length, cells);
+      assert.equal(m.size, inv.size);
+      a.send({ t: 'leave' });
+    }
   });
 
   test('messages invalides : refusés ou ignorés, la connexion survit', async () => {

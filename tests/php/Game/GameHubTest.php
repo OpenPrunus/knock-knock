@@ -355,6 +355,21 @@ final class GameHubTest extends TestCase
         $this->assertSame('bad_cell', $tMover->last('error')['code']);
     }
 
+    public function testAChallengerChoosesTheGridSizeAndTheRematchKeepsIt(): void
+    {
+        [$a, $ta] = $this->connect('Alice', self::token('a'));
+        [$b, $tb] = $this->connect('Bob', self::token('b'));
+        $this->say($a, ['t' => 'challenge', 'id' => $b->id, 'size' => 'l']);
+        $this->assertSame('l', $tb->last('invite')['size']);
+        $this->say($b, ['t' => 'accept', 'id' => $a->id]);
+        $this->assertSame(36, count($ta->last('match')['grid']['skins']));
+        $this->assertSame('l', $ta->last('match')['size']);
+        $this->say($a, ['t' => 'leave']);
+        $this->say($b, ['t' => 'leave']);
+        $this->say($a, ['t' => 'challenge', 'id' => $b->id, 'size' => 'énorme']);
+        $this->assertSame('m', $tb->last('invite')['size'], 'taille inconnue : la moyenne');
+    }
+
     public function testOpeningWithoutAMatchIsIgnored(): void
     {
         [$a, $ta] = $this->connect('Alice');

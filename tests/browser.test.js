@@ -226,6 +226,31 @@ describe('page et modes hors ligne', () => {
   });
 });
 
+describe('taille de la grille selon la difficulté', () => {
+  for (const [level, cells, label] of [['easy', 16, '4×4'], ['normal', 25, '5×5'], ['hard', 36, '6×6']]) {
+    test(`niveau ${level} : grille ${label} contre l'ordinateur et à deux`, async () => {
+      for (const mode of ['ai', 'local']) {
+        await open(DESKTOP);
+        await ev(`(() => { const s = document.querySelector('#sel-level'); s.value = '${level}'; s.dispatchEvent(new Event('change')); })()`);
+        await click(`#menu [data-action=${mode}]`);
+        await waitFor(() => ev(`document.querySelectorAll("#board .cell").length === ${cells}`), 3000, `grille ${label}`);
+        const box = await ev('(() => { const r = document.querySelector("#board").getBoundingClientRect(); const s = document.querySelector("#stage").getBoundingClientRect(); return { top: r.top, bottom: r.bottom, right: r.right, stageTop: s.top, stageBottom: s.bottom, cell: getComputedStyle(document.documentElement).getPropertyValue("--cell"), hud: document.querySelector("#hud").hidden, iw: innerWidth, ih: innerHeight }; })()');
+        assert.ok(box.bottom <= box.ih && box.right <= box.iw && box.top >= 0, `la grille tient à l'écran : ${JSON.stringify(box)}`);
+      }
+    });
+  }
+
+  test('les six styles de portes sont dessinés (une grille 6×6 les montre tous)', async () => {
+    await open(DESKTOP);
+    await ev(`(() => { const s = document.querySelector('#sel-level'); s.value = 'hard'; s.dispatchEvent(new Event('change')); })()`);
+    await click('#menu [data-action=ai]');
+    await waitFor(() => ev('document.querySelectorAll("#board .cell").length === 36'), 3000, 'grille 6×6');
+    const styles = await ev('[...new Set([...document.querySelectorAll("#board .cell")].map((c) => c.className.match(/skin-(\\d)/)[1]))].length');
+    assert.ok(styles >= 4, `${styles} styles visibles`);
+    await shot('hard-grid');
+  });
+});
+
 describe('téléphone : tout tient à l\'écran', () => {
   for (const [name, device] of [['portrait', PHONE_PORTRAIT], ['paysage', PHONE_LANDSCAPE]]) {
     test(`${name} : la grille 5×5 est entière, sans défilement, avec de grandes portes`, async () => {

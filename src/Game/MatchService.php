@@ -47,7 +47,7 @@ final class MatchService
     }
 
     /** Lance un match ; l'ordre des joueurs (le premier commence) est tiré au hasard. */
-    public function start(Client $a, Client $b): Room
+    public function start(Client $a, Client $b, string $size = Rules::DEFAULT_SIZE): Room
     {
         foreach ([$a, $b] as $client) {
             $this->queue->leave($client);
@@ -55,7 +55,7 @@ final class MatchService
         }
         [$first, $second] = $this->randomizer->getInt(0, 1) === 0 ? [$a, $b] : [$b, $a];
         [$ranked, $why] = $this->decideRanked($a, $b);
-        $room = new Room([$first, $second], $ranked, $this->newGame());
+        $room = new Room([$first, $second], $ranked, $this->newGame($size), $size);
         $room->why = $why;
         $this->begin($room);
         $this->logger->info("Match {$first->name} vs {$second->name} (" . ($ranked ? 'ranked' : 'friendly' . ($why !== null ? ": $why" : '')) . ')');
@@ -63,9 +63,9 @@ final class MatchService
         return $room;
     }
 
-    private function newGame(): Game
+    private function newGame(string $size): Game
     {
-        $o = Rules::ONLINE;
+        $o = Rules::SIZES[$size] ?? Rules::SIZES[Rules::DEFAULT_SIZE];
 
         return new Game(Layout::generate($o['cols'], $o['rows'], $o['bandits'], $o['detectives'], $this->randomizer->getInt(1, 0x7FFFFFFF)), 2);
     }
@@ -100,6 +100,7 @@ final class MatchService
             $player->send(Event::Match, [
                 'side' => $side->value,
                 'ranked' => $room->ranked,
+                'size' => $room->size,
                 ...($room->why !== null ? ['why' => $room->why] : []),
                 'grid' => ['cols' => $layout->cols, 'rows' => $layout->rows, 'skins' => $layout->skins, 'pairs' => $layout->pairs()],
                 'turn' => $room->game->turn,
@@ -261,7 +262,7 @@ final class MatchService
         if ($room->rematch[0] && $room->rematch[1]) {
             $this->remove($room);
             [$ranked, $why] = $this->decideRanked($room->players[0], $room->players[1]);
-            $next = new Room($room->players, $ranked, $this->newGame());
+            $next = new Room($room->players, $ranked, $this->newGame($room->size), $room->size);
             $next->why = $why;
             $this->begin($next);
         }

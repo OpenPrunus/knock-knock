@@ -20,7 +20,7 @@ final class EngineTest extends TestCase
 
     public function testEveryLevelIsPlayableAndHasEnoughMotifs(): void
     {
-        foreach ([...Rules::LEVELS, Rules::ONLINE] as $level) {
+        foreach ([...Rules::LEVELS, Rules::ONLINE, ...array_values(Rules::SIZES)] as $level) {
             $layout = Layout::generate($level['cols'], $level['rows'], $level['bandits'], $level['detectives'], 5);
             $this->assertCount($level['cols'] * $level['rows'], $layout->items);
             $this->assertCount($level['bandits'], array_filter($layout->items, static fn (int $v): bool => $v === Rules::BANDIT));
@@ -61,8 +61,8 @@ final class EngineTest extends TestCase
             }
         }
         $same = count(array_filter($skinsOfPairs)) / count($skinsOfPairs);
-        $this->assertGreaterThan(0.1, $same);
-        $this->assertLessThan(0.4, $same, 'les deux portes d\'une paire n\'ont pas forcément le même style (environ 1 sur 4)');
+        $this->assertGreaterThan(0.08, $same);
+        $this->assertLessThan(0.3, $same, 'les deux portes d\'une paire n\'ont pas forcément le même style (environ 1 sur 6)');
     }
 
     public function testAMatchedPairStaysOpenAndPays(): void

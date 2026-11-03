@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Knock\Game\Handler;
 
 use Knock\Game\Client;
+use Knock\Engine\Rules;
 use Knock\Game\ClientStatus;
 use Knock\Game\Event;
 use Knock\Game\Invitations;
@@ -34,9 +35,10 @@ final readonly class ChallengeHandler implements MessageHandler
 
             return;
         }
-        $this->invitations->create($client, $target, $this->clock->now()->getTimestamp());
+        $size = is_string($msg['size'] ?? null) && isset(Rules::SIZES[$msg['size']]) ? $msg['size'] : Rules::DEFAULT_SIZE;
+        $this->invitations->create($client, $target, $this->clock->now()->getTimestamp(), $size);
         $client->send(Event::Waiting, ['id' => $target->id, 'name' => $target->name]);
-        $target->send(Event::Invite, ['id' => $client->id, 'name' => $client->name]);
+        $target->send(Event::Invite, ['id' => $client->id, 'name' => $client->name, 'size' => $size]);
         $this->lobby->dirty = true;
     }
 }

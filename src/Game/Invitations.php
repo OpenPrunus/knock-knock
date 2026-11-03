@@ -14,9 +14,9 @@ final class Invitations
     /** @var array<int, Invitation> indexées par identifiant de client (les deux extrémités) */
     private array $pending = [];
 
-    public function create(Client $from, Client $to, int $now): Invitation
+    public function create(Client $from, Client $to, int $now, string $size = 'm'): Invitation
     {
-        $invitation = new Invitation($from, $to, $now);
+        $invitation = new Invitation($from, $to, $now, $size);
         $this->pending[$from->id] = $invitation;
         $this->pending[$to->id] = $invitation;
         $from->invite = $invitation;

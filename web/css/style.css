@@ -117,6 +117,8 @@ html, body {
 .skin-1 .slot { width: 100%; height: 72%; }
 .skin-2 .slot { width: 86%; height: 86%; }
 .skin-3 .slot { width: 68%; height: 96%; }
+.skin-4 .slot { width: 66%; height: 96%; }
+.skin-5 .slot { width: 92%; height: 86%; }
 .recess { position: absolute; inset: 0; background: #0b0e18; box-shadow: inset 0 0 10px #000; border-radius: 4px; }
 .motif {
   position: absolute;
@@ -195,6 +197,31 @@ html, body {
 }
 .skin-3.open .door, .skin-3.matched .door, .skin-3.special .door { transform: rotateX(105deg); }
 
+/* frigo : s'ouvre sur la droite, poignée à gauche */
+.skin-4 .door {
+  background: linear-gradient(145deg, #f6f9fa, #c9d4d9);
+  border: 3px solid #8fa3ad;
+  border-radius: 7px;
+  transform-origin: right center;
+}
+.skin-4 .door::before { left: 12%; top: 22%; width: 7%; height: 28%; background: #6f858f; border-radius: 4px; }
+.skin-4 .door::after { left: 0; right: 0; top: 40%; height: 3px; background: #8fa3ad; }
+.skin-4.open .door, .skin-4.matched .door, .skin-4.special .door { transform: rotateY(112deg); }
+
+/* rideau de théâtre : les deux pans s'écartent */
+.skin-5 .door { box-shadow: none; border-top: 6px solid #d9a52b; background: none; }
+.skin-5 .door::before, .skin-5 .door::after {
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: repeating-linear-gradient(90deg, #b3202a 0 8px, #8a121b 8px 16px);
+  transition: transform .55s cubic-bezier(.3, .7, .3, 1);
+}
+.skin-5 .door::before { left: 0; transform-origin: left center; }
+.skin-5 .door::after { right: 0; transform-origin: right center; }
+.skin-5.open .door::before, .skin-5.matched .door::before, .skin-5.special .door::before,
+.skin-5.open .door::after, .skin-5.matched .door::after, .skin-5.special .door::after { transform: scaleX(.14); }
+
 .cell.matched .recess { box-shadow: inset 0 0 10px #000, 0 0 0 2px var(--good); }
 .cell.special .recess { box-shadow: inset 0 0 10px #000, 0 0 0 2px var(--bad); }
 .cell.special.good .recess { box-shadow: inset 0 0 10px #000, 0 0 0 2px #6aa8ff; }
@@ -240,6 +267,7 @@ html, body {
 .panel.small { width: min(90%, 340px); }
 .panel h1 { margin: 0 0 .2em; font-size: 2.2rem; color: var(--accent); letter-spacing: .02em; }
 .panel h2 { margin: 0 0 .6em; }
+.size-pick { display: flex; gap: 8px; align-items: center; justify-content: center; margin: .8em 0 0; color: var(--muted); font-size: .9rem; }
 .panel h3 { margin: 1em 0 .4em; font-size: .95rem; color: var(--muted); text-align: left; }
 .tagline { margin: 0 0 1em; color: var(--muted); }
 .left { text-align: left; line-height: 1.45; }

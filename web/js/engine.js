@@ -6,10 +6,17 @@ export const RULES = {
   MISS_PENALTY: 10,
   MOTIFS: 18,
   SETTLE_MS: 1500,
-  SKINS: 4,
+  SKINS: 6,
   BANDIT: -1,
   DETECTIVE: -2,
   ONLINE: { cols: 5, rows: 5, bandits: 2, detectives: 1 },
+  SIZES: {
+    s: { cols: 4, rows: 4, bandits: 1, detectives: 1 },
+    m: { cols: 5, rows: 5, bandits: 2, detectives: 1 },
+    l: { cols: 6, rows: 6, bandits: 4, detectives: 2 },
+  },
+  /** Taille de grille selon le niveau (ordinateur et 2 joueurs). */
+  SIZE_OF_LEVEL: { easy: 's', normal: 'm', hard: 'l' },
   LEVELS: [
     { cols: 3, rows: 4, bandits: 1, detectives: 1 },
     { cols: 4, rows: 4, bandits: 1, detectives: 1 },

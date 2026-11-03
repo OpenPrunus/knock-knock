@@ -8,12 +8,13 @@ about what hides behind it**: two identical pictures can sit behind two complete
 
 ## Features
 
-- **Doors with a personality**: each type opens its own way (the cupboard swings, the garage rolls up, the safe turns, the coffin
-  lid tips). Everything is drawn in CSS, with a little perspective; no image files.
+- **Doors with a personality**: six types, each opening its own way (the cupboard swings, the garage rolls up, the safe turns, the coffin
+  lid tips, the fridge swings, the theatre curtain parts). Everything is drawn in CSS, with a little perspective; no image files.
 - **Cash**: a pair is worth **+$100** (and the doors stay open), a mismatch costs **$10** (the doors close again after 1.5 s).
 - **The Bandit**: when a door reveals him, he steals all the cash you made in the current grid.
 - **The Detective**: found first, he stays with you as a one-shot shield — he stops the next Bandit, then he is gone.
 - **Solo campaign**: eight grids of growing size (3×4 up to 6×7) with more and more Bandits, plus an optional **time attack**. Your best total is kept.
+- **Grid size follows the level**: easy 4×4, normal 5×5, hard 6×6 (more doors, more Bandits) against the computer and on the same screen. Online, quick match is 5×5 and whoever sends a challenge picks 4×4, 5×5 or 6×6.
 - **Against the computer** (easy / normal / hard): it takes turns on the same grid, plays again after a pair, and never cheats: it only
   knows the doors it has seen, and remembers each one with a probability of 30 % / 60 % / 95 %.
 - **Two players on the same screen** (pass & play): the richest at the end of the grid wins.

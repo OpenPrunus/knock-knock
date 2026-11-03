@@ -52,6 +52,7 @@ $ws = (string) getenv('KNOCK_WS');
             </select>
           </label>
         </div>
+        <p class="hint" data-i18n="levelHint"></p>
         <div class="links">
           <button class="link" data-action="help" data-i18n="howTo"></button>
           <button class="link" data-action="leaderboard" data-i18n="leaderboard"></button>
@@ -81,6 +82,13 @@ $ws = (string) getenv('KNOCK_WS');
             <button class="btn primary" id="quick" data-i18n="quickMatch"></button>
             <span id="my-rating" class="badge"></span>
           </div>
+          <label class="size-pick"><span data-i18n="gridSize"></span>
+            <select id="sel-size">
+              <option value="s" data-i18n="size_s"></option>
+              <option value="m" data-i18n="size_m" selected></option>
+              <option value="l" data-i18n="size_l"></option>
+            </select>
+          </label>
           <h3 data-i18n="lobby"></h3>
           <ul id="players" class="list"></ul>
           <h3 data-i18n="leaderboard"></h3>

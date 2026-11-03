@@ -124,6 +124,7 @@ function banner(text, kind = '', ms = 1800) {
 
 function renderHud() {
   const hud = $('#hud');
+  const wasHidden = hud.hidden;
   hud.hidden = app.mode === null;
   if (app.mode === null) return;
   const solo = app.mode === 'solo';
@@ -145,6 +146,7 @@ function renderHud() {
     const left = app.mode === 'online' && !app.over ? Math.max(0, Math.ceil((app.deadline - performance.now()) / 1000)) : null;
     $('#sub').textContent = left !== null ? t('timeLeft', { s: left }) : '';
   }
+  if (wasHidden) fit();                                  // le tableau de bord vient d'apparaître : la scène est plus basse
 }
 
 function popCash(p) {
@@ -288,7 +290,7 @@ function startVersus(mode) {
     app.names = [opts.names[0] || t('player1'), opts.names[1] || t('player2')];
     app.nameKeys = [null, null];
   }
-  newGame(RULES.ONLINE, 2);
+  newGame(RULES.SIZES[RULES.SIZE_OF_LEVEL[opts.level] ?? 'm'], 2);
   hidePanels();
   renderHud();
   if (mode === 'local') banner(t('turnOf', { name: nameOf(0) }), '', 1200);
@@ -488,7 +490,7 @@ function handle(m) {
     case 'waiting': online.status = 'waiting'; setOnlineStatus(t('waitingAnswer', { name: m.name })); break;
     case 'invite':
       online.invite = m;
-      $('#invite-text').textContent = t('invitedYou', { name: m.name });
+      $('#invite-text').textContent = t('invitedYou', { name: m.name, size: t(`size_${m.size ?? 'm'}`) });
       $('#invite').hidden = false;
       audio.play('click');
       break;
@@ -605,7 +607,7 @@ function renderLobby() {
     btn.className = 'btn small';
     btn.textContent = t('challenge');
     btn.disabled = !(p.status === 'lobby' || p.status === 'queued') || status === 'waiting';
-    btn.addEventListener('click', () => net.send({ t: 'challenge', id: p.id }));
+    btn.addEventListener('click', () => net.send({ t: 'challenge', id: p.id, size: $('#sel-size').value }));
     li.append(label, sub, btn);
     list.append(li);
   }

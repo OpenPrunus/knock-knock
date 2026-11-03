@@ -6,7 +6,7 @@ namespace Knock\Game;
 
 final readonly class Invitation
 {
-    public function __construct(public Client $from, public Client $to, public int $at)
+    public function __construct(public Client $from, public Client $to, public int $at, public string $size = 'm')
     {
     }
 

@@ -11,13 +11,21 @@ final class Rules
     final public const int MISS_PENALTY = 10;          // $ perdus par erreur (jamais sous zéro)
     final public const int MOTIFS = 18;                // motifs différents (une paire chacun)
     final public const int SETTLE_MS = 1500;           // portes d'une erreur refermées après ce délai
-    final public const int SKINS = 4;                  // styles de portes : placard, garage, coffre, cercueil
+    final public const int SKINS = 6;                  // styles de portes : placard, garage, coffre, cercueil, frigo, rideau
 
     final public const int BANDIT = -1;
     final public const int DETECTIVE = -2;
 
-    /** Grille des parties en ligne : 5×5, 2 bandits, 1 détective, donc 11 paires. */
+    /** Grille de la partie rapide en ligne : 5×5, 2 bandits, 1 détective, donc 11 paires. */
     final public const array ONLINE = ['cols' => 5, 'rows' => 5, 'bandits' => 2, 'detectives' => 1];
+
+    /** Tailles de grille (facile, normal, difficile hors ligne ; au choix du défieur en ligne). */
+    final public const string DEFAULT_SIZE = 'm';
+    final public const array SIZES = [
+        's' => ['cols' => 4, 'rows' => 4, 'bandits' => 1, 'detectives' => 1],
+        'm' => ['cols' => 5, 'rows' => 5, 'bandits' => 2, 'detectives' => 1],
+        'l' => ['cols' => 6, 'rows' => 6, 'bandits' => 4, 'detectives' => 2],
+    ];
 
     /**
      * Campagne solo : une grille de plus en plus grande, de plus en plus de bandits.

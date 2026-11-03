@@ -30,6 +30,6 @@ final readonly class AcceptHandler implements MessageHandler
 
             return;
         }
-        $this->matches->start($invitation->from, $client);
+        $this->matches->start($invitation->from, $client, $invitation->size);
     }
 }

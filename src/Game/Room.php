@@ -27,7 +27,7 @@ final class Room
     public array $rematch = [false, false];
 
     /** @param array{Client, Client} $players premier joueur, second joueur */
-    public function __construct(public readonly array $players, public readonly bool $ranked, public readonly Game $game)
+    public function __construct(public readonly array $players, public readonly bool $ranked, public readonly Game $game, public readonly string $size = 'm')
     {
     }
 
