@@ -341,3 +341,12 @@ input[type="checkbox"] { width: 1.1em; height: 1.1em; }
   .door, .motif { transition-duration: .01s; transition-delay: 0s; }
   .cell.wrong .slot, #banner { animation: none; }
 }
+
+/* écrans tactiles : cibles d'au moins 40 px */
+@media (pointer: coarse) {
+  .link { padding: 12px 10px; min-height: 44px; font-size: .95rem; }
+  .options label { min-height: 44px; }
+  .options select, input[type="text"], input:not([type]) { min-height: 42px; }
+  input[type="checkbox"] { width: 1.6em; height: 1.6em; }
+  .btn.small { min-height: 42px; }
+}
